@@ -25,7 +25,6 @@ private:
     size_t list_size = 0;
     NodeAllocator alloc;
 
-    // Вспомогательные функции для работы с памятью
     Node* create_node(const T& value, Node* next = nullptr) {
         Node* node = alloc.allocate(1);
         try {
@@ -171,13 +170,10 @@ public:
     // Оператор присваивания копированием
     SingleLinkedList& operator=(const SingleLinkedList& other) {
         if (this != &other) {
-            // Проверяем, можно ли использовать тот же аллокатор
             if (alloc == other.alloc) {
-                // Тот же аллокатор - просто перестраиваем узлы
                 destroy_all();
                 copy_nodes(other);
             } else {
-                // Разные аллокаторы - используем copy-and-swap
                 SingleLinkedList temp(other);
                 swap(temp);
             }
@@ -185,19 +181,15 @@ public:
         return *this;
     }
 
-    // Оператор присваивания перемещением
     SingleLinkedList& operator=(SingleLinkedList&& other) noexcept {
         if (this != &other) {
-            // Проверяем, можно ли использовать тот же аллокатор
             if (alloc == other.alloc) {
-                // Тот же аллокатор - просто перемещаем узлы
                 destroy_all();
                 head = other.head;
                 list_size = other.list_size;
                 other.head = nullptr;
                 other.list_size = 0;
             } else {
-                // Разные аллокаторы - копируем
                 destroy_all();
                 copy_nodes(other);
             }
@@ -215,7 +207,6 @@ public:
         using std::swap;
         swap(head, other.head);
         swap(list_size, other.list_size);
-        // Аллокаторы не меняем - они не swappable
     }
 
     // Доступ к элементам
@@ -314,10 +305,9 @@ public:
     allocator_type get_allocator() const { return alloc; }
 };
 
-// Свободная функция swap для ADL
 template <typename T>
 void swap(SingleLinkedList<T>& lhs, SingleLinkedList<T>& rhs) noexcept {
     lhs.swap(rhs);
 }
 
-#endif // SINGLE_LINKED_LIST_H
+#endif 

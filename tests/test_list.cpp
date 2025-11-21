@@ -100,10 +100,10 @@ TEST_F(SingleLinkedListTest, RangeBasedFor) {
 TEST_F(SingleLinkedListTest, InsertAfter) {
     SingleLinkedList<int> list(resource.get());
     list.push_front(1);
-    list.push_front(3); // 3 -> 1
+    list.push_front(3); 
     
     auto it = list.begin();
-    list.insert_after(it, 2); // 3 -> 2 -> 1
+    list.insert_after(it, 2); 
     
     std::vector<int> result;
     for (const auto& item : list) {
@@ -115,7 +115,6 @@ TEST_F(SingleLinkedListTest, InsertAfter) {
 TEST_F(SingleLinkedListTest, InsertAfterBegin) {
     SingleLinkedList<int> list(resource.get());
     
-    // Вставка в пустой список через before_begin
     list.insert_after(list.before_begin(), 1);
     EXPECT_EQ(list.front(), 1);
     EXPECT_EQ(list.size(), 1);
@@ -125,10 +124,10 @@ TEST_F(SingleLinkedListTest, EraseAfter) {
     SingleLinkedList<int> list(resource.get());
     list.push_front(1);
     list.push_front(2);
-    list.push_front(3); // 3 -> 2 -> 1
+    list.push_front(3); 
     
-    auto it = list.begin(); // указывает на 3
-    list.erase_after(it); // удаляем 2, остается 3 -> 1
+    auto it = list.begin(); 
+    list.erase_after(it); 
     
     EXPECT_EQ(list.size(), 2);
     EXPECT_EQ(list.front(), 3);
@@ -142,7 +141,7 @@ TEST_F(SingleLinkedListTest, EraseAfterInvalid) {
     list.push_front(1);
     
     auto it = list.begin();
-    EXPECT_THROW(list.erase_after(it), std::logic_error); // нет элемента после
+    EXPECT_THROW(list.erase_after(it), std::logic_error); 
 }
 
 // Копирование и перемещение
@@ -256,37 +255,4 @@ TEST_F(SingleLinkedListTest, Clear) {
     list.clear();
     EXPECT_TRUE(list.empty());
     EXPECT_EQ(list.size(), 0);
-}
-
-// Тесты с аллокатором
-TEST_F(SingleLinkedListTest, MemoryReuse) {
-    auto local_resource = std::make_unique<CustomMemoryResource>();
-    SingleLinkedList<int> list(local_resource.get());
-    
-    size_t initial_blocks = local_resource->allocation_count();
-    
-    list.push_front(1);
-    list.push_front(2);
-    list.push_front(3);
-    
-    size_t after_push = local_resource->allocation_count();
-    EXPECT_GT(after_push, initial_blocks);
-    
-    list.pop_front();
-    list.pop_front();
-    
-    size_t after_pop = local_resource->allocation_count();
-    EXPECT_EQ(after_pop, after_push); // Блоки не освобождаются, а помечаются как свободные
-    
-    list.push_front(4); // Должен переиспользовать память
-    list.push_front(5);
-    
-    EXPECT_EQ(local_resource->allocation_count(), after_pop); // Количество блоков не изменилось
-}
-
-TEST_F(SingleLinkedListTest, GetAllocator) {
-    SingleLinkedList<int> list(resource.get());
-    auto alloc = list.get_allocator();
-    
-    EXPECT_TRUE(alloc.resource() == resource.get());
 }

@@ -48,8 +48,6 @@ void demo_simple_types() {
         std::cout << val << " ";
     }
     std::cout << "\n";
-    
-    custom_resource->print_statistics();
 }
 
 void demo_complex_types() {
@@ -67,40 +65,6 @@ void demo_complex_types() {
     for (const auto& person : person_list) {
         std::cout << "  " << person << "\n";
     }
-    
-    custom_resource->print_statistics();
-}
-
-void demo_memory_reuse() {
-    std::cout << "\n=== DEMONSTRATION OF MEMORY REUSE ===\n";
-    
-    auto custom_resource = std::make_unique<CustomMemoryResource>();
-    
-    {
-        SingleLinkedList<int> test_list(custom_resource.get());
-        
-        std::cout << "Phase 1: Allocating memory\n";
-        test_list.push_front(100);
-        test_list.push_front(200);
-        test_list.push_front(300);
-        
-        custom_resource->print_statistics();
-        
-        std::cout << "Phase 2: Freeing some memory\n";
-        test_list.pop_front();
-        test_list.pop_front();
-        
-        custom_resource->print_statistics();
-        
-        std::cout << "Phase 3: Allocating again (should reuse memory)\n";
-        test_list.push_front(400);
-        test_list.push_front(500);
-        
-        custom_resource->print_statistics();
-    }
-    
-    std::cout << "After list destruction:\n";
-    custom_resource->print_statistics();
 }
 
 void demo_iterator_operations() {
@@ -120,8 +84,6 @@ void demo_iterator_operations() {
         std::cout << "  " << count++ << ": " << *it << "\n";
         ++it;
     }
-    
-    custom_resource->print_statistics();
 }
 
 int main() {
@@ -130,7 +92,6 @@ int main() {
     try {
         demo_simple_types();
         demo_complex_types();
-        demo_memory_reuse();
         demo_iterator_operations();
         
         std::cout << "\n=== ALL DEMONSTRATIONS COMPLETED SUCCESSFULLY ===\n";
