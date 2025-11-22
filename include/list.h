@@ -174,8 +174,9 @@ public:
                 destroy_all();
                 copy_nodes(other);
             } else {
-                SingleLinkedList temp(other);
-                swap(temp);
+                //Когда аллокаторы разные, мы не можем просто переиспользовать узлы из other, потому что они выделены в другом пуле памяти.
+                SingleLinkedList temp(other); // Создает полную копию с ПРАВИЛЬНЫМ аллокатором
+                swap(temp);    // Обмениваем содержимое, swap просто меняет указатели head и значения list_size
             }
         }
         return *this;
